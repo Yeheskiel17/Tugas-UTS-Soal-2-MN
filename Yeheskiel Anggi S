@@ -1,0 +1,49 @@
+import numpy as np
+
+# Sistem persamaan linier
+A = np.array([[4, -1, -1], [-1, 3, -1], [-1, 1, 5]])
+b = np.array([5, 3, 4])
+
+# (a) Fungsi eliminasi Gauss
+def gauss_elimination(A, b):
+    n = len(b)
+    for i in range(n):
+        # Pivot utama
+        if A[i][i] == 0.0:
+            raise ValueError("Pivot tidak boleh 0")
+        for j in range(i + 1, n):
+            ratio = A[j][i] / A[i][i]
+            for k in range(n):
+                A[j][k] = A[j][k] - ratio * A[i][k]
+            b[j] = b[j] - ratio * b[i]
+    # Back Substitution
+    x = np.zeros(n)
+    x[n - 1] = b[n - 1] / A[n - 1][n - 1]
+    for i in range(n - 2, -1, -1):
+        x[i] = b[i]
+        for j in range(i + 1, n):
+            x[i] = x[i] - A[i][j] * x[j]
+        x[i] = x[i] / A[i][i]
+    return x
+
+# Memanggil fungsi eliminasi Gauss
+solution = gauss_elimination(A.copy(), b.copy())
+print("Solusi dengan metode eliminasi Gauss:", solution)
+
+# (b) Determinan dengan metode ekspansi kofaktor
+def determinant(matrix):
+    return round(np.linalg.det(matrix))
+
+print("Determinan matriks A:", determinant(A))
+
+# (c) Gunakan fungsi-fungsi di atas untuk menyelesaikan sistem persamaan
+solution = gauss_elimination(A.copy(), b.copy())
+print("Solusi akhir dari sistem persamaan:", solution)
+
+# (d) Gauss-Jordan
+def gauss_jordan(A, b):
+    augmented_matrix = np.hstack([A, b.reshape(-1, 1)])
+    return np.linalg.solve(A, b)
+
+solution_gj = gauss_jordan(A.copy(), b.copy())
+print("Solusi dengan metode Gauss-Jordan:", solution_gj)
